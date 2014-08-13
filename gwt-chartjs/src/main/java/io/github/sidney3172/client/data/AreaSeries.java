@@ -9,6 +9,14 @@ public class AreaSeries extends JavaScriptObject{
 	protected AreaSeries() {
 	}
 	
+	public final native String getLabel() /*-{
+        return this.label;
+    }-*/;
+
+	public final native void setLabel(String label) /*-{
+        this.label = label;
+    }-*/;
+	
 	public final native String getFillColor() /*-{
 		return this.fillColor;
 	}-*/;

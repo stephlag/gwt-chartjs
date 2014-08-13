@@ -2,15 +2,21 @@ package io.github.sidney3172.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.CanvasElement;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
+
+import io.github.sidney3172.client.data.ChartDataProvider;
 import io.github.sidney3172.client.event.*;
 import io.github.sidney3172.client.options.animation.AnimationOptions;
 import io.github.sidney3172.client.options.animation.HasAnimation;
@@ -20,10 +26,13 @@ import io.github.sidney3172.client.resources.Resources;
 /**
  * Base class for all chart widgets<br/>
  * Class describes generic behavior of all chart widgets
+ * 
  * @author sidney3172
  *
  */
-public abstract class Chart extends SimplePanel implements HasAnimationCompleteHandlers, HasAnimation, HasClickHandlers, HasDataSelectionEventHandlers{
+public abstract class Chart<P extends ChartDataProvider<? extends JavaScriptObject>> 
+		extends SimplePanel
+		implements HasAnimationCompleteHandlers, HasAnimation, HasClickHandlers, HasDataSelectionEventHandlers{
 
 	private static Resources resources;
 	
@@ -34,13 +43,14 @@ public abstract class Chart extends SimplePanel implements HasAnimationCompleteH
 	protected CanvasElement canvas;
 	protected ChartStyle style;
 	
-	
+	protected P provider;
+
 	static{
 		resources = GWT.create(Resources.class);
 	}
 	
 	/**
-	 * This constructor creates new chart instance with custom {@link ChartStyle}
+	 * This constructor creates new chart instance with custom {@link ChartStyle}.
 	 * @param style - new CssResource used for styling charts
 	 */
 	public Chart(ChartStyle style){
@@ -51,11 +61,10 @@ public abstract class Chart extends SimplePanel implements HasAnimationCompleteH
         addClickHandler(new ClickHandler() {
             @Override
             public void onClick(final ClickEvent clickEvent) {
-                JavaScriptObject obj = clickEvent.getNativeEvent().cast();
-
-                JavaScriptObject data = getClickPoints(obj, nativeCanvas);
-                if (data != null)
+                JavaScriptObject data = getChartPoints(clickEvent.getNativeEvent());
+                if (data != null) {
                     DataSelectionEvent.fire(Chart.this, Chart.this, data);
+                }
             }
         });
 	}
@@ -66,22 +75,25 @@ public abstract class Chart extends SimplePanel implements HasAnimationCompleteH
 	public Chart() {
 		this(resources.chartStyle());
 	}
+	
+	public final P getProvider() {
+		return provider;
+	}
 
-    private native JavaScriptObject getClickPoints(JavaScriptObject event, JavaScriptObject canvas)/*-{
-        if(canvas == null || event == null)
-            return null;
-        try {
-            return canvas.getPointsAtEvent(event);
-        }
-        catch(e){
-            //exception occurred when added additional ClickHandler which destroys chart before processing.
-            return null;
-        }
-    }-*/;
+	public final void setProvider(P provider) {
+		this.provider = provider;
+	}
+
+    public final void setDataProvider(P provider) {
+        setProvider(provider);
+    }
+
+	protected abstract JavaScriptObject getChartPoints(NativeEvent event);
 
 	/**
 	 * Set new style to the char widget. New style will be injected automatically.<br/>
 	 * NOTICE: new style will be applied after re-drawing of chart<br/>
+     * 
 	 * @param style
 	 */
 	public void setChartStyle(ChartStyle style){
@@ -89,7 +101,7 @@ public abstract class Chart extends SimplePanel implements HasAnimationCompleteH
 		setStylePrimaryName(style.chart());
 	}
 
-    protected void processEvents(JavaScriptObject object){
+    protected void processEvents(JavaScriptObject object) {
         this.nativeCanvas = object;
     }
 
@@ -97,28 +109,57 @@ public abstract class Chart extends SimplePanel implements HasAnimationCompleteH
 	protected void onAttach() {
 		ChartJs.ensureInjected();
 		super.onAttach();
-		draw();
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+            public void execute() {
+                draw();
+            }
+        });
 	}
 
 	/**
 	 * Method re-drawing chart widget without re-requesting data from data provider.<br/>
 	 * To update data call {@link #reload()} method instead
 	 */
-	public abstract void update();
+	public final void update() {
+        if (provider == null) {
+            throw new NullPointerException("Data provider is not specified before calling update()");
+        }
+        processEvents(drawChart());
+    }
 	
 	/**
 	 * Method requesting data from data provider and re-drawing chart.
 	 */
-	public abstract void reload();
+	public final void reload() {
+        if (provider == null) {
+            throw new NullPointerException(getClass().getName() + " is not initialized before invoking reload()");
+        }
+        //TODO: show loading to user
+
+        provider.reload(new AsyncCallback<JavaScriptObject>() {
+
+            public void onSuccess(JavaScriptObject result) {
+                processEvents(drawChart());
+            }
+
+            public void onFailure(Throwable caught) {
+                // TODO Auto-generated method stub
+
+            }
+        });
+    }
 	
 	/**
-	 * Method preparing data and invoking native draw method<br/>
-	 * This method should not be overridden by sub-classes
+	 * Method preparing data and invoking native draw method.
 	 */
-	protected abstract void draw();
+	protected final void draw() {
+        reload();
+    }
+	
+	protected abstract JavaScriptObject drawChart();
 	
 	/**
-	 * Method sets pixel width of chart area
+	 * Method sets pixel width of chart area.
 	 * @param width - width in pixels
 	 * TODO: replace it with generic {@link #setWidth(String)} and {@link #setSize(String, String)}
 	 */
@@ -155,6 +196,7 @@ public abstract class Chart extends SimplePanel implements HasAnimationCompleteH
 
     /**
      * Creates snapshot of current state of chart as image
+	 *
      * @return Image object or null if Chart not rendered (or in progress)
      */
     public Image getSnapshot(){
@@ -185,7 +227,7 @@ public abstract class Chart extends SimplePanel implements HasAnimationCompleteH
 
     @Override
     /**
-     * Important Note : clickHandler added internally by default to handle DataSelectionEvent.
+     * Important Note : clickHandler added internally by default to handle DataSelectionEvent.<br>
      * In case external clickHandler destroying chart (eg update() method invoked) this will lead
      * to DataSelectionEvent won't be created
      */

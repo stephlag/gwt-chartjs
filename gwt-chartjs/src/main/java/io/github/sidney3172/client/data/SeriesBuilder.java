@@ -14,6 +14,11 @@ public class SeriesBuilder {
 		return new SeriesBuilder();
 	}
 	
+	public SeriesBuilder withLabel(String label){
+        series.setLabel(label);
+        return this;
+    }
+	
 	public SeriesBuilder withFillColor(String fillColor){
 		series.setFillColor(fillColor);
 		return this;

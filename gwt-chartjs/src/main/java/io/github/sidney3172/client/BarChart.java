@@ -1,60 +1,34 @@
 package io.github.sidney3172.client;
 
-import io.github.sidney3172.client.data.AreaChartData;
 import io.github.sidney3172.client.data.AreaChartDataProvider;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.dom.client.NativeEvent;
 
 
-public class BarChart extends Chart {
+public class BarChart extends Chart<AreaChartDataProvider> {
 	
-	private AreaChartDataProvider provider;
-	
-	@Override
-	public void draw() {
-		reload();
-		
-	}
-	
-	private native JavaScriptObject drawBar(Element canvas, JavaScriptObject data, JavaScriptObject nativeCanvas)/*-{
-        if (typeof nativeCanvas != "undefined") {
-           nativeCanvas.destroy();
-        }
-        return new $wnd.Chart(canvas.getContext("2d")).Bar(data);
+    private native JavaScriptObject drawBar(Element canvas, JavaScriptObject data, JavaScriptObject nativeCanvas)/*-{
+        if (nativeCanvas != null) {
+			nativeCanvas.destroy();
+		}
+		return new $wnd.Chart(canvas.getContext("2d")).Bar(data); 
 	}-*/;
 
-	@Override
-	public void update() {
-		if(provider == null)
-			throw new NullPointerException("PieCharDataProvider is not specified before invoking update()");
-        nativeCanvas = drawBar(canvas, provider.getData(), nativeCanvas);
-	}
+    protected JavaScriptObject drawChart() {
+        return drawBar(canvas, getProvider().getData(), nativeCanvas);
+    }
 
-	@Override
-	public void reload() {
-		if(provider == null)
-			throw new NullPointerException("PieCharDataProvider is not specified before invoking reload()");
+    protected JavaScriptObject getChartPoints(NativeEvent event) {
+        return getBarsPoints(event, nativeCanvas);
+    }
 
-		//TODO : show loading
-		provider.reload(new AsyncCallback<AreaChartData>() {
-			
-			@Override
-			public void onSuccess(AreaChartData result) {
-                nativeCanvas = drawBar(canvas, result, nativeCanvas);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-	}
-	
-	public void setDataProvider(AreaChartDataProvider provier){
-		this.provider = provier;
-	}
+    private native JavaScriptObject getBarsPoints(NativeEvent event, JavaScriptObject canvas)/*-{
+		if (canvas == null || event == null)
+			return null;
+		return canvas.getBarsAtEvent(event);
+	}-*/;
+
 	
 }
