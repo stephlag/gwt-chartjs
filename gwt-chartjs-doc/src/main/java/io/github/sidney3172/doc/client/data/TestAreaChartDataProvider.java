@@ -10,17 +10,17 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestAreaChartDataProvider implements AreaChartDataProvider{
+public class TestAreaChartDataProvider implements AreaChartDataProvider {
 
 	private AreaChartData data;
 
 	@Override
-	public JavaScriptObject getData() {
+	public AreaChartData getData() {
 		return data;
 	}
 
 	@Override
-	public void reload(AsyncCallback<AreaChartData> callback) {
+    public void reload(AsyncCallback<AreaChartData> callback) {
 		data = createChartData();
 		callback.onSuccess(data);
 	}

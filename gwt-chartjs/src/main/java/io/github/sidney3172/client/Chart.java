@@ -136,18 +136,30 @@ public abstract class Chart<P extends ChartDataProvider<? extends JavaScriptObje
         }
         //TODO: show loading to user
 
-        provider.reload(new AsyncCallback<JavaScriptObject>() {
-
-            public void onSuccess(JavaScriptObject result) {
-                processEvents(drawChart());
-            }
-
-            public void onFailure(Throwable caught) {
-                // TODO Auto-generated method stub
-
-            }
-        });
+        provider.reload(new ProviderAsyncCallBack(provider));
     }
+	
+	private class ProviderAsyncCallBack<T extends JavaScriptObject> implements AsyncCallback<T>	{
+
+		private P dataProvider;
+		
+		ProviderAsyncCallBack(final P provider){
+			dataProvider = provider;
+		}
+		
+		public void onSuccess(T result) {
+		    processEvents(drawChart());
+		}
+		
+		public void onFailure(Throwable caught) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		
+		
+	}
+	
 	
 	/**
 	 * Method preparing data and invoking native draw method.

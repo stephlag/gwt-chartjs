@@ -8,10 +8,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  *
  * @param <J> JS Object type
  */
-// TODO Really use generics
 public interface ChartDataProvider<J extends JavaScriptObject> {
 
-    public JavaScriptObject getData();
+    public J getData();
     
-    public void reload(AsyncCallback<JavaScriptObject> callback);
+    public void reload(AsyncCallback<J> callback);
 }

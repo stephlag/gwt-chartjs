@@ -7,7 +7,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestPieChartDataProvider implements PieChartDataProvider{
+public class TestPieChartDataProvider implements PieChartDataProvider {
 
 	private JsArray<Series> data;
 
@@ -15,7 +15,8 @@ public class TestPieChartDataProvider implements PieChartDataProvider{
 		data = getSeries();
         return data;
 	}
-
+	
+	@Override
 	public void reload(AsyncCallback<JsArray<Series>> callback) {
 		data = getSeries();
 		callback.onSuccess(data);

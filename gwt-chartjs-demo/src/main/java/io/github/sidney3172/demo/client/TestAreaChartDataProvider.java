@@ -1,6 +1,5 @@
 package io.github.sidney3172.demo.client;
 
-import com.google.gwt.core.client.GWT;
 import io.github.sidney3172.client.data.AreaChartData;
 import io.github.sidney3172.client.data.AreaChartDataProvider;
 import io.github.sidney3172.client.data.AreaSeries;
@@ -16,7 +15,7 @@ public class TestAreaChartDataProvider implements AreaChartDataProvider{
     private AreaChartData data;
 
     @Override
-    public JavaScriptObject getData() {
+    public AreaChartData getData() {
         data = createChartData();
         return data;
     }
