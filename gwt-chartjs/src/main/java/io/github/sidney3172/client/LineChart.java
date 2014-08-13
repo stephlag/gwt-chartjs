@@ -20,12 +20,10 @@ public class LineChart extends Chart {
 	}
 	
 	private native JavaScriptObject drawLine(Element canvas, JavaScriptObject data, JavaScriptObject nativeCanvas)/*-{
-        if(nativeCanvas != null)
-            nativeCanvas.destroy();
-
-        nativeCanvas = new $wnd.Chart(canvas.getContext("2d")).Line(data);
-        return nativeCanvas;
-
+        if (typeof nativeCanvas != "undefined") {
+           nativeCanvas.destroy();
+        }
+        return new $wnd.Chart(canvas.getContext("2d")).Line(data);
 	}-*/;
 
 	@Override

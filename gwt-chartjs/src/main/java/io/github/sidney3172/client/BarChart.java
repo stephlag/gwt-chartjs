@@ -1,6 +1,5 @@
 package io.github.sidney3172.client;
 
-import com.google.gwt.core.client.GWT;
 import io.github.sidney3172.client.data.AreaChartData;
 import io.github.sidney3172.client.data.AreaChartDataProvider;
 
@@ -20,12 +19,10 @@ public class BarChart extends Chart {
 	}
 	
 	private native JavaScriptObject drawBar(Element canvas, JavaScriptObject data, JavaScriptObject nativeCanvas)/*-{
-        if(nativeCanvas != null) {
-            nativeCanvas.destroy();
+        if (typeof nativeCanvas != "undefined") {
+           nativeCanvas.destroy();
         }
-
-        nativeCanvas = new $wnd.Chart(canvas.getContext("2d")).Bar(data);
-        return nativeCanvas;
+        return new $wnd.Chart(canvas.getContext("2d")).Bar(data);
 	}-*/;
 
 	@Override

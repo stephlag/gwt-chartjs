@@ -20,9 +20,9 @@ public class DoughnutChart extends Chart {
 	}
 	
 	private native JavaScriptObject drawDoughnut(Element canvas, JavaScriptObject data, JavaScriptObject nativeCanvas)/*-{
-        if(nativeCanvas != null)
-            nativeCanvas.destroy();
-
+        if (typeof nativeCanvas != "undefined") {
+           nativeCanvas.destroy();
+        }
 		return new $wnd.Chart(canvas.getContext("2d")).Doughnut(data);
 	}-*/;
 

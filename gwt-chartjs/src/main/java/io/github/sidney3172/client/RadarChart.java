@@ -22,9 +22,9 @@ public class RadarChart extends Chart {
 	}
 	
 	private native JavaScriptObject drawRadar(Element canvas, JavaScriptObject data, boolean scaleShowLabels, JavaScriptObject nativeCanvas)/*-{
-        if(nativeCanvas != null)
-            nativeCanvas.destroy();
-
+        if (typeof nativeCanvas != "undefined") {
+           nativeCanvas.destroy();
+        }
 		return new $wnd.Chart(canvas.getContext("2d")).Radar(data,{scaleShowLabels : scaleShowLabels, pointLabelFontSize : 10});
 	}-*/;
 
