@@ -13,11 +13,13 @@ public class BarChart extends Chart<AreaChartDataProvider> {
         if (nativeCanvas != null) {
 			nativeCanvas.destroy();
 		}
-		return new $wnd.Chart(canvas.getContext("2d")).Bar(data); 
+		return new $wnd.Chart(canvas.getContext("2d")).Bar(data, {
+			multiTooltipTemplate: "<%=datasetLabel%> : <%= value%>"
+		}); 
 	}-*/;
 
     protected JavaScriptObject drawChart() {
-        return drawBar(canvas, getProvider().getData(), nativeCanvas);
+        return drawBar(canvas, getProvider().getData().getJsObject(), nativeCanvas);
     }
 
     protected JavaScriptObject getChartPoints(NativeEvent event) {

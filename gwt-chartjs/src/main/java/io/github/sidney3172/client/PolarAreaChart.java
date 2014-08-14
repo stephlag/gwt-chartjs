@@ -1,7 +1,6 @@
 package io.github.sidney3172.client;
 
 import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.dom.client.CanvasElement;
 import com.google.gwt.dom.client.Element;
 
 public class PolarAreaChart extends PieChart {
@@ -14,7 +13,7 @@ public class PolarAreaChart extends PieChart {
     }-*/;
 
     protected JavaScriptObject drawChart() {
-        return drawPolarArea(canvas, provider.getData(), nativeCanvas);
+        return drawPolarArea(canvas, provider.getData().getJsObject(), nativeCanvas);
     }
 
     

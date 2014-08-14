@@ -24,7 +24,7 @@ public class PieChart extends Chart<PieChartDataProvider> {
 
     @Override
     protected JavaScriptObject drawChart() {
-        return drawPie(canvas, provider.getData(),nativeCanvas);
+        return drawPie(canvas, provider.getData().getJsObject(),nativeCanvas);
     }
 
     @Override

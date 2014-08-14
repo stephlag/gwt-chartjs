@@ -52,7 +52,7 @@ public class DataSelectionEvent extends GwtEvent<DataSelectionHandler> {
 
             JSONObject obj = array.get(key).isObject();
             if(obj != null){
-                Series series1 = JavaScriptObject.createObject().cast();
+                Series series1 = new Series();
                 series1.setValue(obj.get("value").isNumber().doubleValue());
                 series1.setColor(obj.get("fillColor").isString().stringValue());
                 event.series.add(series1);

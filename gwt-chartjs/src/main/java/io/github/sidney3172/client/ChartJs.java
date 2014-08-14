@@ -1,10 +1,10 @@
 package io.github.sidney3172.client;
 
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.ScriptElement;
 import io.github.sidney3172.client.resources.Resources;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.ScriptElement;
 
 
 /**

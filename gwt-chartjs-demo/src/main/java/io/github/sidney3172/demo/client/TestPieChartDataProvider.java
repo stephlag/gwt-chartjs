@@ -1,51 +1,50 @@
 package io.github.sidney3172.demo.client;
 
+import io.github.sidney3172.client.data.PieChartData;
 import io.github.sidney3172.client.data.PieChartDataProvider;
 import io.github.sidney3172.client.data.Series;
 
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.core.client.JsArray;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TestPieChartDataProvider implements PieChartDataProvider {
 
-	private JsArray<Series> data;
+	private PieChartData data;
 
-	public JsArray<Series> getData() {
+	public PieChartData getData() {
 		data = getSeries();
         return data;
 	}
 	
 	@Override
-	public void reload(AsyncCallback<JsArray<Series>> callback) {
+	public void reload(AsyncCallback<PieChartData> callback) {
 		data = getSeries();
 		callback.onSuccess(data);
 	}
 
-	private JsArray<Series> getSeries(){
-		JsArray<Series> array = JsArray.createArray().cast();
-
-		Series series1 = JavaScriptObject.createObject().cast();
+	private PieChartData getSeries(){
+	    PieChartData pieChartData = new PieChartData();
+		
+		Series series1 = new Series();
 		series1.setColor("#D97041");
 		series1.setValue(Math.random());
-		array.push(series1);
+		pieChartData.addSeries(series1);
 
-		Series series2 = JavaScriptObject.createObject().cast();
+		Series series2 = new Series();
 		series2.setColor("#C7604C");
 		series2.setValue(Math.random());
-		array.push(series2);
+		pieChartData.addSeries(series2);
 
-		Series series3 = JavaScriptObject.createObject().cast();
+		Series series3 = new Series();
 		series3.setColor("#21323D");
 		series3.setValue(Math.random());
-		array.push(series3);
+		pieChartData.addSeries(series3);
 
-		Series series4 = JavaScriptObject.createObject().cast();
+		Series series4 = new Series();
 		series4.setColor("#9D9B7F");
 		series4.setValue(Math.random());
-		array.push(series4);
+		pieChartData.addSeries(series4);
 
-		return array;
+		return pieChartData;
 	}
 
 }

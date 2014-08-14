@@ -1,5 +1,18 @@
 package io.github.sidney3172.client;
 
+import io.github.sidney3172.client.data.ChartData;
+import io.github.sidney3172.client.data.ChartDataProvider;
+import io.github.sidney3172.client.event.AnimationCompleteEvent;
+import io.github.sidney3172.client.event.AnimationCompleteHandler;
+import io.github.sidney3172.client.event.DataSelectionEvent;
+import io.github.sidney3172.client.event.DataSelectionHandler;
+import io.github.sidney3172.client.event.HasAnimationCompleteHandlers;
+import io.github.sidney3172.client.event.HasDataSelectionEventHandlers;
+import io.github.sidney3172.client.options.animation.AnimationOptions;
+import io.github.sidney3172.client.options.animation.HasAnimation;
+import io.github.sidney3172.client.resources.ChartStyle;
+import io.github.sidney3172.client.resources.Resources;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.Scheduler;
@@ -16,13 +29,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
 
-import io.github.sidney3172.client.data.ChartDataProvider;
-import io.github.sidney3172.client.event.*;
-import io.github.sidney3172.client.options.animation.AnimationOptions;
-import io.github.sidney3172.client.options.animation.HasAnimation;
-import io.github.sidney3172.client.resources.ChartStyle;
-import io.github.sidney3172.client.resources.Resources;
-
 /**
  * Base class for all chart widgets<br/>
  * Class describes generic behavior of all chart widgets
@@ -30,9 +36,8 @@ import io.github.sidney3172.client.resources.Resources;
  * @author sidney3172
  *
  */
-public abstract class Chart<P extends ChartDataProvider<? extends JavaScriptObject>> 
-		extends SimplePanel
-		implements HasAnimationCompleteHandlers, HasAnimation, HasClickHandlers, HasDataSelectionEventHandlers{
+public abstract class Chart<P extends ChartDataProvider<? extends ChartData>> extends SimplePanel
+		implements HasAnimationCompleteHandlers, HasAnimation, HasClickHandlers, HasDataSelectionEventHandlers {
 
 	private static Resources resources;
 	
@@ -120,7 +125,7 @@ public abstract class Chart<P extends ChartDataProvider<? extends JavaScriptObje
 	 * Method re-drawing chart widget without re-requesting data from data provider.<br/>
 	 * To update data call {@link #reload()} method instead
 	 */
-	public final void update() {
+	public void update() {
         if (provider == null) {
             throw new NullPointerException("Data provider is not specified before calling update()");
         }
@@ -130,21 +135,18 @@ public abstract class Chart<P extends ChartDataProvider<? extends JavaScriptObje
 	/**
 	 * Method requesting data from data provider and re-drawing chart.
 	 */
-	public final void reload() {
+	public void reload() {
         if (provider == null) {
             throw new NullPointerException(getClass().getName() + " is not initialized before invoking reload()");
         }
         //TODO: show loading to user
 
-        provider.reload(new ProviderAsyncCallBack(provider));
+        provider.reload(new ProviderAsyncCallBack());
     }
 	
-	private class ProviderAsyncCallBack<T extends JavaScriptObject> implements AsyncCallback<T>	{
+	private class ProviderAsyncCallBack<T extends ChartData> implements AsyncCallback<T>	{
 
-		private P dataProvider;
-		
-		ProviderAsyncCallBack(final P provider){
-			dataProvider = provider;
+		ProviderAsyncCallBack(){
 		}
 		
 		public void onSuccess(T result) {
@@ -152,11 +154,8 @@ public abstract class Chart<P extends ChartDataProvider<? extends JavaScriptObje
 		}
 		
 		public void onFailure(Throwable caught) {
-			// TODO Auto-generated method stub
-			
+			// TODO Handle failures
 		}
-
-		
 		
 	}
 	

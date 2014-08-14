@@ -29,7 +29,7 @@ public class RadarChart extends Chart<AreaChartDataProvider> {
 
     @Override
     protected JavaScriptObject drawChart() {
-        return drawRadar(canvas, provider.getData(), nativeCanvas, scaleShowLabels);
+        return drawRadar(canvas, provider.getData().getJsObject(), nativeCanvas, scaleShowLabels);
     }
 
     public void setScaleShowLabels(boolean scaleShowLabels) {

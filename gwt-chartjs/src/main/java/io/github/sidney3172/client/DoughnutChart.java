@@ -14,7 +14,7 @@ public class DoughnutChart extends PieChart {
 
     @Override
     protected JavaScriptObject drawChart() {
-        return drawDoughnut(canvas, provider.getData(), nativeCanvas);
+        return drawDoughnut(canvas, provider.getData().getJsObject(), nativeCanvas);
     }
 
 }

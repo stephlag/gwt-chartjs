@@ -1,13 +1,12 @@
 package io.github.sidney3172.client.data;
 
-import com.google.gwt.core.client.JavaScriptObject;
 
 public class SeriesBuilder {
 	
 	private AreaSeries series = null;
 	
 	private SeriesBuilder(){
-		series = JavaScriptObject.createObject().cast();
+		series = new AreaSeries();
 	}
 	
 	public static SeriesBuilder create(){

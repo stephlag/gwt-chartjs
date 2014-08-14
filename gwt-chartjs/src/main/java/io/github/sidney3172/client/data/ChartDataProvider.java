@@ -1,16 +1,15 @@
 package io.github.sidney3172.client.data;
 
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * Generic chart data provider. 
  *
- * @param <J> JS Object type
+ * @param <D> ChartData type
  */
-public interface ChartDataProvider<J extends JavaScriptObject> {
+public interface ChartDataProvider<D extends ChartData> {
 
-    public J getData();
+    public D getData();
     
-    public void reload(AsyncCallback<J> callback);
+    public void reload(AsyncCallback<D> callback);
 }

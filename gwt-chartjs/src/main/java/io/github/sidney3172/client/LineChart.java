@@ -23,7 +23,7 @@ public class LineChart extends Chart<AreaChartDataProvider> {
 
     @Override
     protected JavaScriptObject drawChart() {
-        return drawLine(canvas, getProvider().getData(), nativeCanvas);
+        return drawLine(canvas, getProvider().getData().getJsObject(), nativeCanvas);
     }
 
     @Override
